@@ -86,6 +86,7 @@ namespace starlightConstants
 		JPSI_ee        = 443011,
 		JPSI_mumu      = 443013,
 		JPSI_ppbar     = 4432212,
+		JPSI_pipipipi  = 443211,
 		JPSI_lambdalambdabar = 4433122,
 		JPSI2S         = 444,
 		JPSI2S_ee      = 444011,

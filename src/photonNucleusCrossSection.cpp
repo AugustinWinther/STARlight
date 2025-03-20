@@ -127,6 +127,7 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 	case JPSI_ee:
 	case JPSI_mumu:
 	case JPSI_ppbar:
+	case JPSI_pipipipi:
 	case JPSI_lambdalambdabar:
 		_slopeParameter=4.0;
 		_vmPhotonCoupling=10.45;
@@ -635,6 +636,7 @@ photonNucleusCrossSection::sigmagp(const double Wgp)
 		case JPSI_ee:
 		case JPSI_mumu:
 		case JPSI_ppbar:
+		case JPSI_pipipipi:
 		case JPSI_lambdalambdabar:
 			sigmagp_r=(1.0-((_channelMass+_ip->protonMass())*(_channelMass+_ip->protonMass()))/(Wgp*Wgp));
 			sigmagp_r*=sigmagp_r;
@@ -800,7 +802,7 @@ photonNucleusCrossSection::breitWigner(const double W,
 {
 	// use simple fixed-width s-wave Breit-Wigner without coherent background for rho'
 	// (PDG '08 eq. 38.56)
-	if(_particleType==FOURPRONG) {
+	if(_particleType==FOURPRONG || _particleType==JPSI_pipipipi) {
 		if (W < 4.01 * _ip->pionChargedMass())
 			return 0;
 		const double termA  = _channelMass * _width;
