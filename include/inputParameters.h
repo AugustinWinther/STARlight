@@ -299,6 +299,7 @@ public:
         double JpsiBrmumu            () const {return _JpsiBrmumu            .value();}
         double JpsiBrppbar           () const {return _JpsiBrppbar           .value();}
 		double JpsiBrpipipipi        () const {return _JpsiBrpipipipi        .value();}
+        double JpsiBrpipikaonkaon    () const {return _JpsiBrpipikaonkaon    .value();}
         double JpsiBrlambdalambdabar () const {return _JpsiBrlambdalambdabar .value();}
         double Psi2SMass             () const {return _Psi2SMass             .value();}
         double Psi2SWidth            () const {return _Psi2SWidth            .value();}
@@ -517,7 +518,8 @@ private:
         parameter<double, VALIDITY_CHECK> _JpsiBree              ;           ///< branching ratio J/psi -> e^+ e^-					      
         parameter<double, VALIDITY_CHECK> _JpsiBrmumu            ;           ///< branching ratio J/psi -> mu^+ mu^-					      
         parameter<double, VALIDITY_CHECK> _JpsiBrppbar           ;           ///< branching ratio J/psi -> p pbar
-		parameter<double, VALIDITY_CHECK> _JpsiBrpipipipi        ;           ///< branching ratio J/psi -> pi+pi-pi+pi-
+		parameter<double, VALIDITY_CHECK> _JpsiBrpipipipi        ;           ///< branching ratio J/psi -> pi^+ pi^- pi^+ pi^-
+        parameter<double, VALIDITY_CHECK> _JpsiBrpipikaonkaon    ;           ///< branching ratio J/psi -> pi^+ pi^- K^+ K^-
         parameter<double, VALIDITY_CHECK> _JpsiBrlambdalambdabar ;           ///< branching ratio J/psi -> lambda lambdabar
         parameter<double, VALIDITY_CHECK> _Psi2SMass             ;           ///< mass of the psi(2S) [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _Psi2SWidth            ;           ///< width of the psi(2S) [GeV/c^2]

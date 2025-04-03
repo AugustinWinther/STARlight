@@ -273,14 +273,19 @@ starlightConstants::particleTypeEnum& ipid2,// This holds the ipid of the unchar
 	return true;
 }
 
-// Very simple two particle decay, only using conservation of energy
-// and momentum. Does NOT take into account spin. 
+//______________________________________________________________________________  
+// Very simple two particle decay, only using conservation of energy and momentum. 
+// Variables ending in 0 is for the mother particle. Variables ending in 1 or 2 are
+// for the daughter particles.
+//
+// The functions alters the momentum values of the daughter particles, and returns
+// true if the decay was succsesfull, or false if not. 
 bool Gammaavectormeson::simpleTwoParticleDecay(const double m0, const double px0, const double py0, const double pz0,
 											   const double m1, double& px1, double& py1, double& pz1,
 											   const double m2, double& px2, double& py2, double& pz2,
 											   int& iFbadevent) 
 {
-	// Check to see if decay is possible
+	// See if decay is possible
 	if (m0 < m1 + m2){
 		cout << " ERROR: W=" << m0  << " GeV too small" << "\n";
 		iFbadevent = 1;
@@ -289,12 +294,12 @@ bool Gammaavectormeson::simpleTwoParticleDecay(const double m0, const double px0
 
     // In mother rest frame, both daughters have the same momentum magnitude
     const double pmag = std::sqrt(m0*m0 - (m1 + m2)*(m1 + m2))
-					  * std::sqrt(m0*m0- (m1 - m2)*(m1 - m2))
+					  * std::sqrt(m0*m0 - (m1 - m2)*(m1 - m2))
 					  / (2.0*m0);
 
-	// Choose random scatter angles for the momentums of the daughters
-	const double phi = 2*starlightConstants::pi*_randy->Rndom();  // Angle around beam
-	const double theta = starlightConstants::pi*_randy->Rndom();  // Angle relative to beam
+	// Choose random scatter angles based on uniform angle distrution.
+	const double phi = 2*starlightConstants::pi*_randy->Rndom();
+	const double theta = getTheta(starlightConstants::PION);
 	
 	// Calculate daughter energies
 	double E1 = std::sqrt(m1*m1 + pmag*pmag);
@@ -308,7 +313,7 @@ bool Gammaavectormeson::simpleTwoParticleDecay(const double m0, const double px0
 	py2 = -py1;
 	pz2 = -pz1;
 
-	// Lorentz boost into same frame mother is in
+	// Lorentz boost into same frame mother is in (i.e., lab frame)
 	const double E0 = std::sqrt(m0*m0 + px0*px0 + py0*py0 + pz0*pz0);
 	const double beta_x = -px0/E0;
 	const double beta_y = -py0/E0;
@@ -324,6 +329,8 @@ bool Gammaavectormeson::simpleTwoParticleDecay(const double m0, const double px0
 	return true;
 }
 
+//______________________________________________________________________________ 
+// Decays J/psi into 2(pi+pi-) via a1(1260) and rho0
 bool Gammaavectormeson::jpsi4piDecay(const double m0, const double px0, const double py0, const double pz0, 
 									 lorentzVector* decayVecs, int& iFbadevent)
 {
@@ -377,12 +384,77 @@ bool Gammaavectormeson::jpsi4piDecay(const double m0, const double px0, const do
 	decayVecs[2] = lorentzVector(pion3_px, pion3_py, pion3_pz, pion3_E);
 	decayVecs[3] = lorentzVector(pion4_px, pion4_py, pion4_pz, pion4_E);
 
+	return true;
+}
+
+//______________________________________________________________________________ 
+// Decays J/psi into K+K-pi+pi- via two K*(892)0 
+bool Gammaavectormeson::jpsi2kaon2piDecay(const double m0, const double px0, const double py0, const double pz0, 
+									      lorentzVector* decayVecs, int& iFbadevent)
+{
+	// Initialize decay particle constants
+	static const double pion_m = 0.13957039; // GeV/c^2
+	static const double kaon_m = 0.493677;   // GeV/c^2
+	static const double kstar_m = 0.896;     // GeV/c^2
+
+	// Before any decay is done, check that decay into 4 pions is possible
+	if (m0 < 2*kaon_m + 2*pion_m){
+		cout << " ERROR: W=" << m0 << " GeV too small" << "\n";
+		iFbadevent = 1;
+		return false;
+	}
+
+	// Initialize decay particle variables
+	double kstar1_px, kstar1_py, kstar1_pz;
+	double kstar2_px, kstar2_py, kstar2_pz;
+	double pion1_E, pion1_px, pion1_py, pion1_pz;
+	double pion2_E, pion2_px, pion2_py, pion2_pz;
+	double kaon1_E, kaon1_px, kaon1_py, kaon1_pz;
+	double kaon2_E, kaon2_px, kaon2_py, kaon2_pz;
+
+	// J/psi -> K*(892)0 + K*(892)0
+	if (!simpleTwoParticleDecay(m0, px0, py0, pz0, 
+								kstar_m, kstar1_px, kstar1_py, kstar1_pz,
+								kstar_m, kstar2_px, kstar2_py, kstar2_pz, 
+								iFbadevent)) {
+		cout << " ERROR: at J/psi -> K*(892)0 + K*(892)0 decay \n";
+		return false;				
+	}
+
+	// First K*(892)0 -> kaon + pion
+	if (!simpleTwoParticleDecay(kstar_m, kstar1_px, kstar1_py, kstar1_pz,
+								pion_m, pion1_px, pion1_py, pion1_pz,
+								kaon_m, kaon1_px, kaon1_py, kaon1_pz,
+								iFbadevent)){
+	cout << " ERROR: at K*(892)0 -> kaon + pion decay \n";
+	return false;
+	}
+
+	pion1_E = std::sqrt(pion_m*pion_m + pion1_px*pion1_px + pion1_py*pion1_py + pion1_pz*pion1_pz);
+	kaon1_E = std::sqrt(kaon_m*kaon_m + kaon1_px*kaon1_px + kaon1_py*kaon1_py + kaon1_pz*kaon1_pz);
+	decayVecs[0] = lorentzVector(pion1_px, pion1_py, pion1_pz, pion1_E);
+	decayVecs[1] = lorentzVector(kaon1_px, kaon1_py, kaon1_pz, kaon1_E);
+
+	// Second K*(892)0 -> kaon + pion
+	if (!simpleTwoParticleDecay(kstar_m, kstar2_px, kstar2_py, kstar2_pz,
+								pion_m, pion2_px, pion2_py, pion2_pz,
+								kaon_m, kaon2_px, kaon2_py, kaon2_pz,
+								iFbadevent)){
+	cout << " ERROR: at K*(892)0 -> kaon + pion decay \n";
+	return false;
+	}
+
+	pion2_E = std::sqrt(pion_m*pion_m + pion2_px*pion2_px + pion2_py*pion2_py + pion2_pz*pion2_pz);
+	kaon2_E = std::sqrt(kaon_m*kaon_m + kaon2_px*kaon2_px + kaon2_py*kaon2_py + kaon2_pz*kaon2_pz);
+	decayVecs[2] = lorentzVector(pion2_px, pion2_py, pion2_pz, pion2_E);
+	decayVecs[3] = lorentzVector(kaon2_px, kaon2_py, kaon2_pz, kaon2_E);
+
 	// Verify that momentum and energy is conserved
 	const double E0 = std::sqrt(m0*m0 + px0*px0 + py0*py0 + pz0*pz0);
-	const double E_sum = E0 - pion1_E - pion2_E - pion3_E - pion4_E;
-	const double px_sum = px0 - pion1_px - pion2_px - pion3_px - pion4_px;
-	const double py_sum = py0 - pion1_py - pion2_py - pion3_py - pion4_py;
-	const double pz_sum = pz0 - pion1_pz - pion2_pz - pion3_pz - pion4_pz;
+	const double E_sum = E0 - pion1_E - pion2_E - kaon1_E - kaon2_E;
+	const double px_sum = px0 - pion1_px - pion2_px - kaon1_px - kaon2_px;
+	const double py_sum = py0 - pion1_py - pion2_py - kaon1_py - kaon2_py;
+	const double pz_sum = pz0 - pion1_pz - pion2_pz - kaon1_pz - kaon2_pz;
 
 	// Only allow error of up to 1eV
 	if (std::abs(E_sum)  > 0.000000001 || std::abs(px_sum) > 0.000000001 ||
@@ -396,7 +468,7 @@ bool Gammaavectormeson::jpsi4piDecay(const double m0, const double px0, const do
 	//      << px_sum*1000000000 << " " 
 	// 	    << py_sum*1000000000 << " " 
 	// 	    << pz_sum*1000000000 << "\n";
-	
+
 	return true;
 }
 
@@ -1236,17 +1308,113 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 
 		} while (!accepted || tcheck != 0);//repeats loop if VM creation, decay, ptcut or etaCut criterias are not fulfilled. Important to avoid situations where events produced is less than requested.
 
-		double md = 0.13957039;  // Pion mass (charged)
+		static const double pion_m = 0.13957039; // GeV/c^2
+		if ((iFbadevent == 0) and (tcheck == 0)){
+			//adds daughters as particles into the output event.
+			double charge, energy, particle_id;	
+			for (unsigned int i = 0; i < 4; ++i) {
+				energy = sqrt( decayVecs[i].GetPx()*decayVecs[i].GetPx()
+						     + decayVecs[i].GetPy()*decayVecs[i].GetPy()
+						     + decayVecs[i].GetPz()*decayVecs[i].GetPz()
+						     + pion_m*pion_m);
+				
+				// Make half of them pi- and half of them pi+
+				if (i%2 == 0){
+					charge = 1;
+					particle_id = starlightConstants::PION;
+				} else {
+					charge = -1;
+					particle_id = -1*starlightConstants::PION;
+				}
+				
+				starlightParticle daughter(decayVecs[i].GetPx(),
+									   decayVecs[i].GetPy(),
+									   decayVecs[i].GetPz(),
+									   energy, pion_m, particle_id, charge);
+
+				event.addParticle(daughter);
+			}
+			if (_ip->giveExtraBeamInfo()){
+				lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
+				lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
+				double targetEgamma, rap1cm = acosh(_ip->beamLorentzGamma()),cmsEgam = Pgam[0], Pzgam = Pgam[3];
+				lorentzVector gamma(Pgam[1],Pgam[2],Pzgam,cmsEgam);
+				lorentzVector vmeson(mom[0],mom[1],mom[2],E);
+
+				if(_TargetBeam == 1)
+				targetEgamma = cmsEgam*cosh(rap1cm) - Pzgam*sinh(rap1cm);
+				else
+				targetEgamma = cmsEgam*cosh(rap1cm) + Pzgam*sinh(rap1cm);
+
+				event.addVectorMeson(vmeson);
+				if(_TargetBeam == 1)
+					event.addGammaFromBeam2(gamma,targetEgamma,Q2gam);
+				else if(_TargetBeam == 2)
+					event.addGammaFromBeam1(gamma,targetEgamma,Q2gam);
+				
+				event.addOutgoingBeams(beam1,beam2);
+				event.addVertext(t);
+			}
+		}
+	} else if (_VMpidtest == starlightConstants::JPSI_pipikaonkaon) {
+		double        comenergy = 0;
+		double        mom[3]    = {0, 0, 0};
+		double        E         = 0;
+		lorentzVector decayVecs[4];
+		bool accepted;
+		double rapidity = 0;
+		do {
+			tcheck = 0;//reinitialized after every loop cycle - to avoid infinite loop
+			iFbadevent = 0;//same as above.			
+			pickwy(comenergy, rapidity);
+
+			//Vector meson is created and its four momentum is determined below
+			if (_VMinterferencemode == 0)
+				momenta(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck,
+						Pb1[0], Pb1[1],Pb1[2],Pb1[3],
+						Pb2[0], Pb2[1],Pb2[2],Pb2[3],t,
+						Pgam[0], Pgam[1],Pgam[2],Pgam[3],Q2gam);//without interference
+			else if (_VMinterferencemode==1)
+				vmpt(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);//with interference
+			_nmbAttempts++;
+			accepted = true;//re-initialized after every loop cycle -to avoid infinite loop
+
+			
+			if(tcheck != 0 || !jpsi2kaon2piDecay(comenergy, mom[0], mom[1], mom[2], decayVecs, iFbadevent))
+			{//if either vector meson creation, or further decay into four pions, is impossible
+				accepted = false;
+				continue;//this skips the etaCut and ptCut checks.
+			}
+
+			if (accepted and (tcheck == 0)) {
+				_nmbAccepted++;//maintain counts of accepted events.
+			}
+
+		} while (!accepted || tcheck != 0);//repeats loop if VM creation, decay, ptcut or etaCut criterias are not fulfilled. Important to avoid situations where events produced is less than requested.
+
+		static const double pion_m = 0.13957039; // GeV/c^2
+		static const double kaon_m = 0.493677;   // GeV/c^2
 		if ((iFbadevent == 0) and (tcheck == 0)){
 		//adds daughters as particles into the output event.
+			double charge, mass, energy, particle_id;	
 			for (unsigned int i = 0; i < 4; ++i) {
+				switch (i)
+				{
+				case 0: mass = pion_m; charge =  1; particle_id =  starlightConstants::PION; break;
+				case 1: mass = kaon_m; charge = -1; particle_id = -1*starlightConstants::KAONCHARGE; break;
+				case 2: mass = pion_m; charge = -1; particle_id = -1*starlightConstants::PION; break;
+				case 3: mass = kaon_m; charge =  1; particle_id =  starlightConstants::KAONCHARGE; break;
+				}
+				energy = sqrt( decayVecs[i].GetPx()*decayVecs[i].GetPx()
+							 + decayVecs[i].GetPy()*decayVecs[i].GetPy()
+							 + decayVecs[i].GetPz()*decayVecs[i].GetPz()
+							 + mass*mass);
+
 				starlightParticle daughter(decayVecs[i].GetPx(),
 				                           decayVecs[i].GetPy(),
 				                           decayVecs[i].GetPz(),
-							   sqrt(decayVecs[i].GetPx()*decayVecs[i].GetPx()+decayVecs[i].GetPy()*decayVecs[i].GetPy()+decayVecs[i].GetPz()*decayVecs[i].GetPz()+md*md),//energy 
-							   md,  // _mass
-							   starlightConstants::PION*(2*(i/2)-1),   // make half of the particles pi^+, half pi^-
-							   (2*(i/2)-1));//charge
+							   			   energy, mass, particle_id, charge);
+
 				event.addParticle(daughter);
 			}
 			if (_ip->giveExtraBeamInfo()){

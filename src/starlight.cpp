@@ -371,6 +371,7 @@ starlight::createEventChannel()
 	case JPSI_mumu:
 	case JPSI_ppbar:
 	case JPSI_pipipipi:
+	case JPSI_pipikaonkaon:
 	case JPSI_lambdalambdabar:
 	case JPSI2S:
 	case JPSI2S_ee:
