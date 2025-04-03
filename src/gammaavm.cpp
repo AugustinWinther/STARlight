@@ -355,32 +355,40 @@ bool Gammaavectormeson::jpsi4piDecay(const double m0, const double px0, const do
 	double pion4_E, pion4_px, pion4_py, pion4_pz;
 
 	// J/psi -> a1(1260) + pion
-	if (!simpleTwoParticleDecay(m0, px0, py0, pz0,a1_m, a1_px, a1_py, a1_pz,
-						        pion_m, pion1_px, pion1_py, pion1_pz,iFbadevent)) {
+	if (!simpleTwoParticleDecay(m0, px0, py0, pz0,
+								a1_m, a1_px, a1_py, a1_pz,
+						        pion_m, pion1_px, pion1_py, pion1_pz,
+								iFbadevent)) {
 		cout << " ERROR: at J/psi -> a1(1260) + pion decay \n";
 		return false;				
 	}
-	pion1_E = std::sqrt(pion_m*pion_m + pion1_px*pion1_px + pion1_py*pion1_py + pion1_pz*pion1_pz);
-	decayVecs[0] = lorentzVector(pion1_px, pion1_py, pion1_pz, pion1_E);
 	
 	// a1(1260) -> rho0 + pion
-	if (!simpleTwoParticleDecay(a1_m, a1_px, a1_py, a1_pz,rho_m, rho_px, rho_py, rho_pz,
-						        pion_m, pion2_px, pion2_py, pion2_pz,iFbadevent)){
+	if (!simpleTwoParticleDecay(a1_m, a1_px, a1_py, a1_pz,
+								rho_m, rho_px, rho_py, rho_pz,
+						        pion_m, pion2_px, pion2_py, pion2_pz,
+								iFbadevent)){
 		cout << " ERROR: at a1(1260) -> rho0 + pion decay \n";
 		return false;
 	}
-	pion2_E = std::sqrt(pion_m*pion_m + pion2_px*pion2_px + pion2_py*pion2_py + pion2_pz*pion2_pz);
-	decayVecs[1] = lorentzVector(pion2_px, pion2_py, pion2_pz, pion2_E);
-
+	
 	// rho0 -> pion + pion
-	if (!simpleTwoParticleDecay(rho_m, rho_px, rho_py, rho_pz, pion_m, pion3_px, pion3_py, pion3_pz,
-						        pion_m, pion4_px, pion4_py, pion4_pz, iFbadevent)){
+	if (!simpleTwoParticleDecay(rho_m, rho_px, rho_py, rho_pz, 
+								pion_m, pion3_px, pion3_py, pion3_pz,
+						        pion_m, pion4_px, pion4_py, pion4_pz, 
+								iFbadevent)){
 
 		cout << " ERROR: at rho0 -> pion + pion decay \n";
 		return false;
 	}
+
+	// Add decay particles of decayVecs
+	pion1_E = std::sqrt(pion_m*pion_m + pion1_px*pion1_px + pion1_py*pion1_py + pion1_pz*pion1_pz);
+	pion2_E = std::sqrt(pion_m*pion_m + pion2_px*pion2_px + pion2_py*pion2_py + pion2_pz*pion2_pz);
 	pion3_E = std::sqrt(pion_m*pion_m + pion3_px*pion3_px + pion3_py*pion3_py + pion3_pz*pion3_pz);
 	pion4_E = std::sqrt(pion_m*pion_m + pion4_px*pion4_px + pion4_py*pion4_py + pion4_pz*pion4_pz);
+	decayVecs[0] = lorentzVector(pion1_px, pion1_py, pion1_pz, pion1_E);
+	decayVecs[1] = lorentzVector(pion2_px, pion2_py, pion2_pz, pion2_E);
 	decayVecs[2] = lorentzVector(pion3_px, pion3_py, pion3_pz, pion3_E);
 	decayVecs[3] = lorentzVector(pion4_px, pion4_py, pion4_pz, pion4_E);
 
@@ -426,35 +434,28 @@ bool Gammaavectormeson::jpsi2kaon2piDecay(const double m0, const double px0, con
 								pion_m, pion1_px, pion1_py, pion1_pz,
 								kaon_m, kaon1_px, kaon1_py, kaon1_pz,
 								iFbadevent)){
-	cout << " ERROR: at K*(892)0 -> kaon + pion decay \n";
-	return false;
+		cout << " ERROR: at K*(892)0 -> kaon + pion decay \n";
+		return false;
 	}
-
-	pion1_E = std::sqrt(pion_m*pion_m + pion1_px*pion1_px + pion1_py*pion1_py + pion1_pz*pion1_pz);
-	kaon1_E = std::sqrt(kaon_m*kaon_m + kaon1_px*kaon1_px + kaon1_py*kaon1_py + kaon1_pz*kaon1_pz);
-	decayVecs[0] = lorentzVector(pion1_px, pion1_py, pion1_pz, pion1_E);
-	decayVecs[1] = lorentzVector(kaon1_px, kaon1_py, kaon1_pz, kaon1_E);
 
 	// Second K*(892)0 -> kaon + pion
 	if (!simpleTwoParticleDecay(kstar_m, kstar2_px, kstar2_py, kstar2_pz,
 								pion_m, pion2_px, pion2_py, pion2_pz,
 								kaon_m, kaon2_px, kaon2_py, kaon2_pz,
 								iFbadevent)){
-	cout << " ERROR: at K*(892)0 -> kaon + pion decay \n";
-	return false;
+		cout << " ERROR: at K*(892)0 -> kaon + pion decay \n";
+		return false;
 	}
 
+	// Add decay particles of decayVecs
+	pion1_E = std::sqrt(pion_m*pion_m + pion1_px*pion1_px + pion1_py*pion1_py + pion1_pz*pion1_pz);
+	kaon1_E = std::sqrt(kaon_m*kaon_m + kaon1_px*kaon1_px + kaon1_py*kaon1_py + kaon1_pz*kaon1_pz);
 	pion2_E = std::sqrt(pion_m*pion_m + pion2_px*pion2_px + pion2_py*pion2_py + pion2_pz*pion2_pz);
 	kaon2_E = std::sqrt(kaon_m*kaon_m + kaon2_px*kaon2_px + kaon2_py*kaon2_py + kaon2_pz*kaon2_pz);
+	decayVecs[0] = lorentzVector(pion1_px, pion1_py, pion1_pz, pion1_E);
+	decayVecs[1] = lorentzVector(kaon1_px, kaon1_py, kaon1_pz, kaon1_E);
 	decayVecs[2] = lorentzVector(pion2_px, pion2_py, pion2_pz, pion2_E);
 	decayVecs[3] = lorentzVector(kaon2_px, kaon2_py, kaon2_pz, kaon2_E);
-
-	// Verify that momentum and energy is conserved
-	const double E0 = std::sqrt(m0*m0 + px0*px0 + py0*py0 + pz0*pz0);
-	const double E_sum = E0 - pion1_E - pion2_E - kaon1_E - kaon2_E;
-	const double px_sum = px0 - pion1_px - pion2_px - kaon1_px - kaon2_px;
-	const double py_sum = py0 - pion1_py - pion2_py - kaon1_py - kaon2_py;
-	const double pz_sum = pz0 - pion1_pz - pion2_pz - kaon1_pz - kaon2_pz;
 
 	return true;
 }
