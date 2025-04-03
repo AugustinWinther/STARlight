@@ -456,19 +456,6 @@ bool Gammaavectormeson::jpsi2kaon2piDecay(const double m0, const double px0, con
 	const double py_sum = py0 - pion1_py - pion2_py - kaon1_py - kaon2_py;
 	const double pz_sum = pz0 - pion1_pz - pion2_pz - kaon1_pz - kaon2_pz;
 
-	// Only allow error of up to 1eV
-	if (std::abs(E_sum)  > 0.000000001 || std::abs(px_sum) > 0.000000001 ||
-	    std::abs(py_sum) > 0.000000001 || std::abs(pz_sum) > 0.000000001) {
-		cout << "Energies or momentums of decay particles did not add up!\n";
-		iFbadevent = 1;
-		return false;
-	}
-
-	// cout <<  E_sum*1000000000 << " " 
-	//      << px_sum*1000000000 << " " 
-	// 	    << py_sum*1000000000 << " " 
-	// 	    << pz_sum*1000000000 << "\n";
-
 	return true;
 }
 
