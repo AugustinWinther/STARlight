@@ -299,7 +299,8 @@ bool Gammaavectormeson::simpleTwoParticleDecay(const double m0, const double px0
 
 	// Choose random scatter angles based on uniform angle distrution.
 	const double phi = 2*starlightConstants::pi*_randy->Rndom();
-	const double theta = getTheta(starlightConstants::PION);
+	const double theta = std::acos(1 - 2*_randy->Rndom());  // acos of a random
+															// num between -1 and 1
 	
 	// Calculate daughter energies
 	double E1 = std::sqrt(m1*m1 + pmag*pmag);
