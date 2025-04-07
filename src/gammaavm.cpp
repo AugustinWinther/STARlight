@@ -336,12 +336,12 @@ bool Gammaavectormeson::jpsi4piDecay(const double m0, const double px0, const do
 									 lorentzVector* decayVecs, int& iFbadevent)
 {
 	// Initialize decay particle constants
-	static const double pion_m = 0.13957039; // GeV/c^2
-	static const double rho_m = 0.77526;     // GeV/c^2
-	static const double a1_m = 1.230;  		 // GeV/c^2
+	static const double pion_m = _ip->pionChargedMass();
+	static const double rho_m = _ip->rho0Mass();
+	static const double a1_m = _ip->a1Mass();
 
 	// Before any decay is done, check that decay into 4 pions is possible
-	if (m0 < 4*pion_m){
+	if (m0 < 4.0*pion_m){
 		cout << " ERROR: W=" << m0 << " GeV too small" << "\n";
 		iFbadevent = 1;
 		return false;
@@ -397,17 +397,17 @@ bool Gammaavectormeson::jpsi4piDecay(const double m0, const double px0, const do
 }
 
 //______________________________________________________________________________ 
-// Decays J/psi into K+K-pi+pi- via two K*(892)0 
-bool Gammaavectormeson::jpsi2kaon2piDecay(const double m0, const double px0, const double py0, const double pz0, 
+// Decays J/psi into pi^+ pi^- K^+ K^- via two K*(892)0 
+bool Gammaavectormeson::jpsi2pi2kaonDecay(const double m0, const double px0, const double py0, const double pz0, 
 									      lorentzVector* decayVecs, int& iFbadevent)
 {
 	// Initialize decay particle constants
-	static const double pion_m = 0.13957039; // GeV/c^2
-	static const double kaon_m = 0.493677;   // GeV/c^2
-	static const double kstar_m = 0.896;     // GeV/c^2
+	static const double pion_m = _ip->pionChargedMass();
+	static const double kaon_m = _ip->kaonChargedMass();
+	static const double kstar_m = _ip->kstarNeutralMass();
 
 	// Before any decay is done, check that decay into 4 pions is possible
-	if (m0 < 2*kaon_m + 2*pion_m){
+	if (m0 < 2.0*kaon_m + 2.0*pion_m){
 		cout << " ERROR: W=" << m0 << " GeV too small" << "\n";
 		iFbadevent = 1;
 		return false;
@@ -1297,7 +1297,7 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 
 		} while (!accepted || tcheck != 0);//repeats loop if VM creation, decay, ptcut or etaCut criterias are not fulfilled. Important to avoid situations where events produced is less than requested.
 
-		static const double pion_m = 0.13957039; // GeV/c^2
+		static const double mass = _ip->pionChargedMass();
 		if ((iFbadevent == 0) and (tcheck == 0)){
 			//adds daughters as particles into the output event.
 			double charge, energy, particle_id;	
@@ -1305,9 +1305,9 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 				energy = sqrt( decayVecs[i].GetPx()*decayVecs[i].GetPx()
 						     + decayVecs[i].GetPy()*decayVecs[i].GetPy()
 						     + decayVecs[i].GetPz()*decayVecs[i].GetPz()
-						     + pion_m*pion_m);
+						     + mass*mass);
 				
-				// Make half of them pi- and half of them pi+
+				// Make half of them pi^+ and half of them pi^-
 				if (i%2 == 0){
 					charge = 1;
 					particle_id = starlightConstants::PION;
@@ -1319,7 +1319,7 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 				starlightParticle daughter(decayVecs[i].GetPx(),
 									   decayVecs[i].GetPy(),
 									   decayVecs[i].GetPz(),
-									   energy, pion_m, particle_id, charge);
+									   energy, mass, particle_id, charge);
 
 				event.addParticle(daughter);
 			}
@@ -1369,7 +1369,7 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 			accepted = true;//re-initialized after every loop cycle -to avoid infinite loop
 
 			
-			if(tcheck != 0 || !jpsi2kaon2piDecay(comenergy, mom[0], mom[1], mom[2], decayVecs, iFbadevent))
+			if(tcheck != 0 || !jpsi2pi2kaonDecay(comenergy, mom[0], mom[1], mom[2], decayVecs, iFbadevent))
 			{//if either vector meson creation, or further decay into four pions, is impossible
 				accepted = false;
 				continue;//this skips the etaCut and ptCut checks.
@@ -1381,18 +1381,16 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 
 		} while (!accepted || tcheck != 0);//repeats loop if VM creation, decay, ptcut or etaCut criterias are not fulfilled. Important to avoid situations where events produced is less than requested.
 
-		static const double pion_m = 0.13957039; // GeV/c^2
-		static const double kaon_m = 0.493677;   // GeV/c^2
 		if ((iFbadevent == 0) and (tcheck == 0)){
 		//adds daughters as particles into the output event.
 			double charge, mass, energy, particle_id;	
 			for (unsigned int i = 0; i < 4; ++i) {
 				switch (i)
 				{
-				case 0: mass = pion_m; charge =  1; particle_id =  starlightConstants::PION; break;
-				case 1: mass = kaon_m; charge = -1; particle_id = -1*starlightConstants::KAONCHARGE; break;
-				case 2: mass = pion_m; charge = -1; particle_id = -1*starlightConstants::PION; break;
-				case 3: mass = kaon_m; charge =  1; particle_id =  starlightConstants::KAONCHARGE; break;
+				case 0: mass = _ip->pionChargedMass(); charge =  1; particle_id = starlightConstants::PION; break;
+				case 1: mass = _ip->kaonChargedMass(); charge = -1; particle_id = -1*starlightConstants::KAONCHARGE; break;
+				case 2: mass = _ip->pionChargedMass(); charge = -1; particle_id = -1*starlightConstants::PION; break;
+				case 3: mass = _ip->kaonChargedMass(); charge =  1; particle_id = starlightConstants::KAONCHARGE; break;
 				}
 				energy = sqrt( decayVecs[i].GetPx()*decayVecs[i].GetPx()
 							 + decayVecs[i].GetPy()*decayVecs[i].GetPy()

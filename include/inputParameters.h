@@ -254,6 +254,10 @@ public:
         double f2Mass                () const {return _f2Mass                .value();}
         double f2Width               () const {return _f2Width               .value();}
         double f2BrPiPi              () const {return _f2BrPiPi              .value();}
+        double kstarNeutralMass      () const {return _kstarNeutralMass      .value();}
+        double kstarNeutralWidth     () const {return _kstarNeutralWidth     .value();}
+        double a1Mass                () const {return _a1Mass                .value();}
+        double a1Width               () const {return _a1Width               .value();}
         double a2Mass                () const {return _a2Mass                .value();}
         double a2Width               () const {return _a2Width               .value();}
         double f2PrimeMass           () const {return _f2PrimeMass           .value();}
@@ -474,6 +478,10 @@ private:
         parameter<double, VALIDITY_CHECK> _f2Mass                ;           ///< mass of the f_2(1270) [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _f2Width               ;           ///< width of the f_2(1270) [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _f2BrPiPi              ;           ///< branching ratio f_2(1270) -> pi^+ pi^-
+        parameter<double, VALIDITY_CHECK> _kstarNeutralMass      ;           ///< mass of the K*_0(892) [GeV/c^2]
+        parameter<double, VALIDITY_CHECK> _kstarNeutralWidth     ;           ///< width of the K*_0(892) [GeV/c^2]
+        parameter<double, VALIDITY_CHECK> _a1Mass                ;           ///< mass of the a_1(1260) [GeV/c^2]
+        parameter<double, VALIDITY_CHECK> _a1Width               ;           ///< width of the a_1(1260) [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _a2Mass                ;           ///< mass of the a_2(1320) [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _a2Width               ;           ///< width of the a_2(1320) [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _f2PrimeMass           ;           ///< mass of the f'_2(1525) [GeV/c^2]

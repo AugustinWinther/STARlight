@@ -117,6 +117,10 @@ inputParameters::inputParameters()
           _f2Mass                ("f2Mass"                , 1.2751        , NOT_REQUIRED),
           _f2Width               ("f2Width"               , 0.1851        , NOT_REQUIRED),
           _f2BrPiPi              ("f2BrPiPi"              , 0.561         , NOT_REQUIRED),
+		  _kstarNeutralMass	     ("kstarNeutralMass"      , 0.89555       , NOT_REQUIRED), // added from PDGlive (07 Apr 2025)
+		  _kstarNeutralWidth	 ("kstarNeutralWidth"     , 0.0473        , NOT_REQUIRED), // added from PDGlive (07 Apr 2025)
+          _a1Mass                ("a1Mass"                , 1.230         , NOT_REQUIRED), // added from PDGlive (07 Apr 2025)
+          _a1Width               ("a1Width"               , 0.425         , NOT_REQUIRED), // added from PDGlive (07 Apr 2025) +-0.175
           _a2Mass                ("a2Mass"                , 1.3183        , NOT_REQUIRED),
           _a2Width               ("a2Width"               , 0.105         , NOT_REQUIRED),
           _f2PrimeMass           ("f2PrimeMass"           , 1.525         , NOT_REQUIRED),
@@ -264,6 +268,10 @@ inputParameters::inputParameters()
         _ip.addParameter(_f2Mass                );
         _ip.addParameter(_f2Width               );
         _ip.addParameter(_f2BrPiPi              );
+		_ip.addParameter(_kstarNeutralMass      );
+        _ip.addParameter(_kstarNeutralWidth     );
+		_ip.addParameter(_a1Mass                );
+        _ip.addParameter(_a1Width               );
         _ip.addParameter(_a2Mass                );
         _ip.addParameter(_a2Width               );
         _ip.addParameter(_f2PrimeMass           );
