@@ -805,9 +805,20 @@ photonNucleusCrossSection::breitWigner(const double W,
 	// use simple fixed-width s-wave Breit-Wigner without coherent background for rho'
 	// (PDG '08 eq. 38.56)
 
-	// Not sure if correct for JPSI_pipipipi. Obviosuly not correct for JPSI_pipikaonkaon
-	if(_particleType==FOURPRONG || _particleType==JPSI_pipipipi || _particleType==JPSI_pipikaonkaon) {
+	// Not sure if correct for JPSI_pipipipi
+	if(_particleType==FOURPRONG || _particleType==JPSI_pipipipi) {
 		if (W < 4.01 * _ip->pionChargedMass())
+			return 0;
+		const double termA  = _channelMass * _width;
+		const double termA2 = termA * termA;
+		const double termB  = W * W - _channelMass * _channelMass;
+		double C = _ANORM * _ANORM * termA2 / (termB * termB + termA2);
+		return C/W;  // this is dsigma/dW, not dsigma/ds need to convert?
+	}
+
+	// Very unsure of this is correct for JPSI_pipikaonkaon, just copied what happens for FOURPRONG
+	if(_particleType==JPSI_pipikaonkaon) {
+		if (W < 2.0 * _ip->pionChargedMass() + 2.0 * _ip->kaonChargedMass())
 			return 0;
 		const double termA  = _channelMass * _width;
 		const double termA2 = termA * termA;
