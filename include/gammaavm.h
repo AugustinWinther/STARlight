@@ -68,8 +68,8 @@ class Gammaavectormeson : public eventChannel
   void twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double W,double px0,double py0,double pz0,double &E1,double &px1,double &py1,double&pz1, double &E2, double &px2,double &py2,double &pz2,int &iFbadevent);
   bool omega3piDecay(starlightConstants::particleTypeEnum& ipid, starlightConstants::particleTypeEnum& ipid2, const double E, const double W, const double* p, lorentzVector* decayMoms, int& iFbadevent);
   bool simpleTwoParticleDecay(const double m0, const double px0, const double py0, const double pz0,const double m1, double& px1, double& py1, double& pz1,const double m2, double& px2, double& py2, double& pz2,int& iFbadevent);
-  bool jpsi4piDecay(const double m0, const double px0, const double py0, const double pz0, lorentzVector* decayVecs, int& iFbadevent);
-  bool jpsi2kaon2piDecay(const double m0, const double px0, const double py0, const double pz0, lorentzVector* decayVecs, int& iFbadevent);
+  bool jpsi4piDecay(starlightConstants::particleTypeEnum& ipid, const double m0, const double px0, const double py0, const double pz0, lorentzVector* decayVecs, int& iFbadevent);
+  bool jpsi2kaon2piDecay(starlightConstants::particleTypeEnum& ipid, starlightConstants::particleTypeEnum& ipid2, const double m0, const double px0, const double py0, const double pz0, lorentzVector* decayVecs, int& iFbadevent);
   bool fourBodyDecay(starlightConstants::particleTypeEnum& ipid, const double E, const double W, const double* p, lorentzVector* decayMoms, int& iFbadevent);
   double getMass();
   double getWidth();

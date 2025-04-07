@@ -804,6 +804,8 @@ photonNucleusCrossSection::breitWigner(const double W,
 {
 	// use simple fixed-width s-wave Breit-Wigner without coherent background for rho'
 	// (PDG '08 eq. 38.56)
+
+	// Not sure if correct for JPSI_pipipipi. Obviosuly not correct for JPSI_pipikaonkaon
 	if(_particleType==FOURPRONG || _particleType==JPSI_pipipipi || _particleType==JPSI_pipikaonkaon) {
 		if (W < 4.01 * _ip->pionChargedMass())
 			return 0;
