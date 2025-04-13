@@ -273,6 +273,15 @@ starlightConstants::particleTypeEnum& ipid2,// This holds the ipid of the unchar
 	return true;
 }
 
+//______________________________________________________________________________
+// Randomly choose the mass of a particle with central-mass m0 and decay width
+// gamma, using Breit-Wigner/Cauchy probability distrubution.
+double Gammaavectormeson::breitWignerMass(const double m0, const double gamma){
+	const double rand = _randy->Rndom();
+	return 0.5 * (gamma*gamma + 4.0*m0*m0) * std::tan(starlightConstants::pi*rand)
+		   / (gamma + 2.0*m0*std::tan(starlightConstants::pi*rand));
+}
+
 //______________________________________________________________________________  
 // Very simple two particle decay, only using conservation of energy and momentum. 
 // Variables ending in 0 is for the mother particle. Variables ending in 1 or 2 are
@@ -287,7 +296,6 @@ bool Gammaavectormeson::simpleTwoParticleDecay(const double m0, const double px0
 {
 	// See if decay is possible
 	if (m0 < m1 + m2){
-		cout << " ERROR: W=" << m0  << " GeV too small" << "\n";
 		iFbadevent = 1;
 		return false;
 	}
@@ -337,12 +345,11 @@ bool Gammaavectormeson::jpsi4piDecay(const double m0, const double px0, const do
 {
 	// Initialize decay particle constants
 	static const double pion_m = _ip->pionChargedMass();
-	static const double rho_m = _ip->rho0Mass();
-	static const double a1_m = _ip->a1Mass();
-
+	const double rho_m = breitWignerMass(_ip->rho0Mass(), _ip->rho0Width());
+	const double a1_m = breitWignerMass(_ip->a1Mass(), _ip->a1Width());
+	
 	// Before any decay is done, check that decay into 4 pions is possible
 	if (m0 < 4.0*pion_m){
-		cout << " ERROR: W=" << m0 << " GeV too small" << "\n";
 		iFbadevent = 1;
 		return false;
 	}
@@ -360,7 +367,7 @@ bool Gammaavectormeson::jpsi4piDecay(const double m0, const double px0, const do
 								a1_m, a1_px, a1_py, a1_pz,
 						        pion_m, pion1_px, pion1_py, pion1_pz,
 								iFbadevent)) {
-		cout << " ERROR: at J/psi -> a1(1260) + pion decay \n";
+		iFbadevent = 1;
 		return false;				
 	}
 	
@@ -369,7 +376,7 @@ bool Gammaavectormeson::jpsi4piDecay(const double m0, const double px0, const do
 								rho_m, rho_px, rho_py, rho_pz,
 						        pion_m, pion2_px, pion2_py, pion2_pz,
 								iFbadevent)){
-		cout << " ERROR: at a1(1260) -> rho0 + pion decay \n";
+		iFbadevent = 1;
 		return false;
 	}
 	
@@ -378,8 +385,7 @@ bool Gammaavectormeson::jpsi4piDecay(const double m0, const double px0, const do
 								pion_m, pion3_px, pion3_py, pion3_pz,
 						        pion_m, pion4_px, pion4_py, pion4_pz, 
 								iFbadevent)){
-
-		cout << " ERROR: at rho0 -> pion + pion decay \n";
+		iFbadevent = 1;
 		return false;
 	}
 
@@ -404,11 +410,10 @@ bool Gammaavectormeson::jpsi2pi2kaonDecay(const double m0, const double px0, con
 	// Initialize decay particle constants
 	static const double pion_m = _ip->pionChargedMass();
 	static const double kaon_m = _ip->kaonChargedMass();
-	static const double kstar_m = _ip->kstarNeutralMass();
+	const double kstar_m = breitWignerMass(_ip->kstarNeutralMass(), _ip->kstarNeutralWidth());
 
 	// Before any decay is done, check that decay into 4 pions is possible
 	if (m0 < 2.0*kaon_m + 2.0*pion_m){
-		cout << " ERROR: W=" << m0 << " GeV too small" << "\n";
 		iFbadevent = 1;
 		return false;
 	}
@@ -426,7 +431,7 @@ bool Gammaavectormeson::jpsi2pi2kaonDecay(const double m0, const double px0, con
 								kstar_m, kstar1_px, kstar1_py, kstar1_pz,
 								kstar_m, kstar2_px, kstar2_py, kstar2_pz, 
 								iFbadevent)) {
-		cout << " ERROR: at J/psi -> K*(892)0 + K*(892)0 decay \n";
+		iFbadevent = 1;
 		return false;				
 	}
 
@@ -435,7 +440,7 @@ bool Gammaavectormeson::jpsi2pi2kaonDecay(const double m0, const double px0, con
 								pion_m, pion1_px, pion1_py, pion1_pz,
 								kaon_m, kaon1_px, kaon1_py, kaon1_pz,
 								iFbadevent)){
-		cout << " ERROR: at K*(892)0 -> kaon + pion decay \n";
+		iFbadevent = 1;
 		return false;
 	}
 
@@ -444,7 +449,7 @@ bool Gammaavectormeson::jpsi2pi2kaonDecay(const double m0, const double px0, con
 								pion_m, pion2_px, pion2_py, pion2_pz,
 								kaon_m, kaon2_px, kaon2_py, kaon2_pz,
 								iFbadevent)){
-		cout << " ERROR: at K*(892)0 -> kaon + pion decay \n";
+		iFbadevent = 1;
 		return false;
 	}
 
