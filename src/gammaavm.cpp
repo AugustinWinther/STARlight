@@ -362,7 +362,7 @@ bool Gammaavectormeson::jpsi4piDecay(const double m0, const double px0, const do
 	double pion3_E, pion3_px, pion3_py, pion3_pz;
 	double pion4_E, pion4_px, pion4_py, pion4_pz;
 
-	// J/psi -> a1(1260) + pion
+	// J/psi -> a1(1260) pi
 	if (!simpleTwoParticleDecay(m0, px0, py0, pz0,
 								a1_m, a1_px, a1_py, a1_pz,
 						        pion_m, pion1_px, pion1_py, pion1_pz,
@@ -371,7 +371,7 @@ bool Gammaavectormeson::jpsi4piDecay(const double m0, const double px0, const do
 		return false;				
 	}
 	
-	// a1(1260) -> rho0 + pion
+	// a1(1260) -> rho0 pi
 	if (!simpleTwoParticleDecay(a1_m, a1_px, a1_py, a1_pz,
 								rho_m, rho_px, rho_py, rho_pz,
 						        pion_m, pion2_px, pion2_py, pion2_pz,
@@ -380,7 +380,7 @@ bool Gammaavectormeson::jpsi4piDecay(const double m0, const double px0, const do
 		return false;
 	}
 	
-	// rho0 -> pion + pion
+	// rho0 -> pi^+  pi^-
 	if (!simpleTwoParticleDecay(rho_m, rho_px, rho_py, rho_pz, 
 								pion_m, pion3_px, pion3_py, pion3_pz,
 						        pion_m, pion4_px, pion4_py, pion4_pz, 
@@ -403,8 +403,8 @@ bool Gammaavectormeson::jpsi4piDecay(const double m0, const double px0, const do
 }
 
 //______________________________________________________________________________ 
-// Decays J/psi into pi^+ pi^- K^+ K^- via two K*(892)0 
-bool Gammaavectormeson::jpsi2pi2kaonDecay(const double m0, const double px0, const double py0, const double pz0, 
+// Decays J/psi into K^+ K^- pi^+ pi^-  via a K*(892)^0 and a K*bar(892)^0
+bool Gammaavectormeson::jpsi2kaon2piDecay(const double m0, const double px0, const double py0, const double pz0, 
 									      lorentzVector* decayVecs, int& iFbadevent)
 {
 	// Initialize decay particle constants
@@ -419,24 +419,24 @@ bool Gammaavectormeson::jpsi2pi2kaonDecay(const double m0, const double px0, con
 	}
 
 	// Initialize decay particle variables
-	double kstar1_px, kstar1_py, kstar1_pz;
-	double kstar2_px, kstar2_py, kstar2_pz;
+	double kstar_px, kstar_py, kstar_pz;
+	double kstarbar_px, kstarbar_py, kstarbar_pz;
 	double pion1_E, pion1_px, pion1_py, pion1_pz;
 	double pion2_E, pion2_px, pion2_py, pion2_pz;
 	double kaon1_E, kaon1_px, kaon1_py, kaon1_pz;
 	double kaon2_E, kaon2_px, kaon2_py, kaon2_pz;
 
-	// J/psi -> K*(892)0 + K*(892)0
+	// J/psi -> K*(892)^0  K*bar(892)^0
 	if (!simpleTwoParticleDecay(m0, px0, py0, pz0, 
-								kstar_m, kstar1_px, kstar1_py, kstar1_pz,
-								kstar_m, kstar2_px, kstar2_py, kstar2_pz, 
+								kstar_m, kstar_px, kstar_py, kstar_pz,
+								kstar_m, kstarbar_px, kstarbar_py, kstarbar_pz, 
 								iFbadevent)) {
 		iFbadevent = 1;
 		return false;				
 	}
 
-	// First K*(892)0 -> kaon + pion
-	if (!simpleTwoParticleDecay(kstar_m, kstar1_px, kstar1_py, kstar1_pz,
+	// K*(892)^0 -> K^+ pi^-
+	if (!simpleTwoParticleDecay(kstar_m, kstar_px, kstar_py, kstar_pz,
 								pion_m, pion1_px, pion1_py, pion1_pz,
 								kaon_m, kaon1_px, kaon1_py, kaon1_pz,
 								iFbadevent)){
@@ -444,8 +444,8 @@ bool Gammaavectormeson::jpsi2pi2kaonDecay(const double m0, const double px0, con
 		return false;
 	}
 
-	// Second K*(892)0 -> kaon + pion
-	if (!simpleTwoParticleDecay(kstar_m, kstar2_px, kstar2_py, kstar2_pz,
+	// K*bar(892)0 -> K^- pi^+
+	if (!simpleTwoParticleDecay(kstar_m, kstarbar_px, kstarbar_py, kstarbar_pz,
 								pion_m, pion2_px, pion2_py, pion2_pz,
 								kaon_m, kaon2_px, kaon2_py, kaon2_pz,
 								iFbadevent)){
@@ -454,14 +454,14 @@ bool Gammaavectormeson::jpsi2pi2kaonDecay(const double m0, const double px0, con
 	}
 
 	// Add decay particles of decayVecs
-	pion1_E = std::sqrt(pion_m*pion_m + pion1_px*pion1_px + pion1_py*pion1_py + pion1_pz*pion1_pz);
 	kaon1_E = std::sqrt(kaon_m*kaon_m + kaon1_px*kaon1_px + kaon1_py*kaon1_py + kaon1_pz*kaon1_pz);
-	pion2_E = std::sqrt(pion_m*pion_m + pion2_px*pion2_px + pion2_py*pion2_py + pion2_pz*pion2_pz);
+	pion1_E = std::sqrt(pion_m*pion_m + pion1_px*pion1_px + pion1_py*pion1_py + pion1_pz*pion1_pz);
 	kaon2_E = std::sqrt(kaon_m*kaon_m + kaon2_px*kaon2_px + kaon2_py*kaon2_py + kaon2_pz*kaon2_pz);
-	decayVecs[0] = lorentzVector(pion1_px, pion1_py, pion1_pz, pion1_E);
-	decayVecs[1] = lorentzVector(kaon1_px, kaon1_py, kaon1_pz, kaon1_E);
-	decayVecs[2] = lorentzVector(pion2_px, pion2_py, pion2_pz, pion2_E);
-	decayVecs[3] = lorentzVector(kaon2_px, kaon2_py, kaon2_pz, kaon2_E);
+	pion2_E = std::sqrt(pion_m*pion_m + pion2_px*pion2_px + pion2_py*pion2_py + pion2_pz*pion2_pz);
+	decayVecs[0] = lorentzVector(kaon1_px, kaon1_py, kaon1_pz, kaon1_E);
+	decayVecs[1] = lorentzVector(pion1_px, pion1_py, pion1_pz, pion1_E);
+	decayVecs[2] = lorentzVector(kaon2_px, kaon2_py, kaon2_pz, kaon2_E);
+	decayVecs[3] = lorentzVector(pion2_px, pion2_py, pion2_pz, pion2_E);
 
 	return true;
 }
@@ -544,7 +544,6 @@ double Gammaavectormeson::getDaughterMass(starlightConstants::particleTypeEnum &
 	case starlightConstants::FOURPRONG:
 	case starlightConstants::OMEGA:
 	case starlightConstants::OMEGA_pipipi:
-	case starlightConstants::JPSI_pipipipi:
 		mdec = _ip->pionChargedMass();
 		ipid = starlightConstants::PION;
 		break;
@@ -1377,7 +1376,7 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 				event.addVertext(t);
 			}
 		}
-	} else if (_VMpidtest == starlightConstants::JPSI_pipikaonkaon) {
+	} else if (_VMpidtest == starlightConstants::JPSI_kaonkaonpipi) {
 		double        comenergy = 0;
 		double        mom[3]    = {0, 0, 0};
 		double        E         = 0;
@@ -1401,7 +1400,7 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 			accepted = true;//re-initialized after every loop cycle -to avoid infinite loop
 
 			
-			if(tcheck != 0 || !jpsi2pi2kaonDecay(comenergy, mom[0], mom[1], mom[2], decayVecs, iFbadevent))
+			if(tcheck != 0 || !jpsi2kaon2piDecay(comenergy, mom[0], mom[1], mom[2], decayVecs, iFbadevent))
 			{//if either vector meson creation, or further decay into four pions, is impossible
 				accepted = false;
 				continue;//this skips the etaCut and ptCut checks.
@@ -1447,10 +1446,10 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 			for (unsigned int i = 0; i < 4; ++i) {
 				switch (i)
 				{
-				case 0: mass = _ip->pionChargedMass(); charge =  1; particle_id = starlightConstants::PION; break;
-				case 1: mass = _ip->kaonChargedMass(); charge = -1; particle_id = -1*starlightConstants::KAONCHARGE; break;
-				case 2: mass = _ip->pionChargedMass(); charge = -1; particle_id = -1*starlightConstants::PION; break;
-				case 3: mass = _ip->kaonChargedMass(); charge =  1; particle_id = starlightConstants::KAONCHARGE; break;
+				case 0: mass = _ip->kaonChargedMass(); charge =  1; particle_id = starlightConstants::KAONCHARGE; break;
+				case 1: mass = _ip->pionChargedMass(); charge = -1; particle_id = -1*starlightConstants::PION; break;
+				case 2: mass = _ip->kaonChargedMass(); charge = -1; particle_id = -1*starlightConstants::KAONCHARGE; break;
+				case 3: mass = _ip->pionChargedMass(); charge =  1; particle_id = starlightConstants::PION; break;
 				}
 				energy = sqrt( decayVecs[i].GetPx()*decayVecs[i].GetPx()
 							 + decayVecs[i].GetPy()*decayVecs[i].GetPy()

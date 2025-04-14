@@ -166,7 +166,7 @@ inputParameters::inputParameters()
           _JpsiBrmumu            ("JpsiBrmumu"            , 0.05961       , NOT_REQUIRED),
           _JpsiBrppbar           ("JpsiBrppbar"           , 0.002120      , NOT_REQUIRED),
 		  _JpsiBrpipipipi        ("_JpsiBrpipipipi"       , 0.0000357     , NOT_REQUIRED), 
-		  _JpsiBrpipikaonkaon    ("_JpsiBrpipikaonkaon"   , 0.0066        , NOT_REQUIRED), 
+		  _JpsiBrkaonkaonpipi    ("_JpsiBrkaonkaonpipi"   , 0.0066        , NOT_REQUIRED), 
 		  _JpsiBrlambdalambdabar ("_JpsiBrlambdalambdabar", 0.001890      , NOT_REQUIRED),
           _Psi2SMass             ("Psi2SMass"             , 3.686109      , NOT_REQUIRED),
           _Psi2SWidth            ("Psi2SWidth"            , 0.000299      , NOT_REQUIRED),
@@ -317,7 +317,7 @@ inputParameters::inputParameters()
         _ip.addParameter(_JpsiBrmumu            );
         _ip.addParameter(_JpsiBrppbar           );
 		_ip.addParameter(_JpsiBrpipipipi        );
-		_ip.addParameter(_JpsiBrpipikaonkaon    );
+		_ip.addParameter(_JpsiBrkaonkaonpipi    );
 		_ip.addParameter(_JpsiBrlambdalambdabar );
         _ip.addParameter(_Psi2SMass             );
         _ip.addParameter(_Psi2SWidth            );
@@ -725,13 +725,13 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		break;
 	case 443211321:  // J/psi
 		cout<<"In inputParameters setting J/psi mass!"<<endl;
-		_particleType = JPSI_pipikaonkaon;
+		_particleType = JPSI_kaonkaonpipi;
 		_decayType    = NARROWVMDEFAULT;
 		mass          = JpsiMass();
 		width         = JpsiWidth();
 		defaultMinW   = mass - 5 * width;
 		defaultMaxW   = mass + 5 * width;
-		_inputBranchingRatio = JpsiBrpipikaonkaon();
+		_inputBranchingRatio = JpsiBrkaonkaonpipi();
 		break;
 	case 444:  // psi(2S) 
 		_particleType = JPSI2S;

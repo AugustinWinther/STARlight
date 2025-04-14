@@ -128,7 +128,7 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 	case JPSI_mumu:
 	case JPSI_ppbar:
 	case JPSI_pipipipi:
-	case JPSI_pipikaonkaon:
+	case JPSI_kaonkaonpipi:
 	case JPSI_lambdalambdabar:
 		_slopeParameter=4.0;
 		_vmPhotonCoupling=10.45;
@@ -638,7 +638,7 @@ photonNucleusCrossSection::sigmagp(const double Wgp)
 		case JPSI_mumu:
 		case JPSI_ppbar:
 		case JPSI_pipipipi:
-		case JPSI_pipikaonkaon:
+		case JPSI_kaonkaonpipi:
 		case JPSI_lambdalambdabar:
 			sigmagp_r=(1.0-((_channelMass+_ip->protonMass())*(_channelMass+_ip->protonMass()))/(Wgp*Wgp));
 			sigmagp_r*=sigmagp_r;
@@ -816,8 +816,8 @@ photonNucleusCrossSection::breitWigner(const double W,
 		return C/W;  // this is dsigma/dW, not dsigma/ds need to convert?
 	}
 
-	// Very unsure of this is correct for JPSI_pipikaonkaon, just copied what happens for FOURPRONG
-	if(_particleType==JPSI_pipikaonkaon) {
+	// Very unsure of this is correct for JPSI_kaonkaonpipi, just copied what happens for FOURPRONG
+	if(_particleType==JPSI_kaonkaonpipi) {
 		if (W < 2.0 * _ip->pionChargedMass() + 2.0 * _ip->kaonChargedMass())
 			return 0;
 		const double termA  = _channelMass * _width;
