@@ -1289,11 +1289,38 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 			_nmbAttempts++;
 			accepted = true;//re-initialized after every loop cycle -to avoid infinite loop
 
-			
 			if(tcheck != 0 || !jpsi4piDecay(comenergy, mom[0], mom[1], mom[2], decayVecs, iFbadevent))
 			{//if either vector meson creation, or further decay into four pions, is impossible
 				accepted = false;
 				continue;//this skips the etaCut and ptCut checks.
+			}
+
+			if (_ptCutEnabled) {
+				for (int i = 0; i < 4; i++) {
+					double pt_chk2 = 0;
+					pt_chk2 += pow( decayVecs[i].GetPx() , 2);
+					pt_chk2 += pow( decayVecs[i].GetPy() , 2);// compute transverse momentum (squared) for the particle, for ptCut checks.
+
+					if (pt_chk2 < ptCutMin2 || pt_chk2 > ptCutMax2) {//if particle does not fall into ptCut range.
+						accepted = false;
+						break;//skips checking other daughter particles
+					}
+				}
+			}
+			if (_etaCutEnabled) {
+				for (int i = 0; i < 4; i++) {
+					double eta_chk = pseudoRapidityLab(
+						decayVecs[i].GetPx(),
+						decayVecs[i].GetPy(),
+						decayVecs[i].GetPz(),
+						decayVecs[i].GetE(),
+						beta
+					);//computes the pseudorapidity in the laboratory frame.
+					if (eta_chk < _etaCutMin || eta_chk > _etaCutMax) {//if this particle does not fall into range
+						accepted = false;
+						break;//skips checking other daughter particles
+					}
+				}
 			}
 
 			if (accepted and (tcheck == 0)) {
@@ -1380,6 +1407,34 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 				continue;//this skips the etaCut and ptCut checks.
 			}
 
+			if (_ptCutEnabled) {
+				for (int i = 0; i < 4; i++) {
+					double pt_chk2 = 0;
+					pt_chk2 += pow( decayVecs[i].GetPx() , 2);
+					pt_chk2 += pow( decayVecs[i].GetPy() , 2);// compute transverse momentum (squared) for the particle, for ptCut checks.
+
+					if (pt_chk2 < ptCutMin2 || pt_chk2 > ptCutMax2) {//if particle does not fall into ptCut range.
+						accepted = false;
+						break;//skips checking other daughter particles
+					}
+				}
+			}
+			if (_etaCutEnabled) {
+				for (int i = 0; i < 4; i++) {
+					double eta_chk = pseudoRapidityLab(
+						decayVecs[i].GetPx(),
+						decayVecs[i].GetPy(),
+						decayVecs[i].GetPz(),
+						decayVecs[i].GetE(),
+						beta
+					);//computes the pseudorapidity in the laboratory frame.
+					if (eta_chk < _etaCutMin || eta_chk > _etaCutMax) {//if this particle does not fall into range
+						accepted = false;
+						break;//skips checking other daughter particles
+					}
+				}
+			}
+
 			if (accepted and (tcheck == 0)) {
 				_nmbAccepted++;//maintain counts of accepted events.
 			}
@@ -1409,6 +1464,7 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 
 				event.addParticle(daughter);
 			}
+
 			if (_ip->giveExtraBeamInfo()){
 				lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
 				lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
