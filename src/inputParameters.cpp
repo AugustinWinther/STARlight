@@ -723,7 +723,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		defaultMaxW   = mass + 5 * width;
 		_inputBranchingRatio = JpsiBrpipipipi();
 		break;
-	case 443211321:  // J/psi
+	case 443321211:  // J/psi
 		cout<<"In inputParameters setting J/psi mass!"<<endl;
 		_particleType = JPSI_kaonkaonpipi;
 		_decayType    = NARROWVMDEFAULT;
