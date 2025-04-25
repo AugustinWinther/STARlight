@@ -278,8 +278,8 @@ starlightConstants::particleTypeEnum& ipid2,// This holds the ipid of the unchar
 // gamma, using Breit-Wigner/Cauchy probability distrubution.
 double Gammaavectormeson::breitWignerMass(const double m0, const double gamma){
 	const double rand = _randy->Rndom();
-	return 0.5 * (gamma*gamma + 4.0*m0*m0) * std::tan(starlightConstants::pi*rand)
-		   / (gamma + 2.0*m0*std::tan(starlightConstants::pi*rand));
+	const double tan_rand = std::tan(starlightConstants::pi*rand);
+	return 0.5 * (gamma*gamma + 4.0*m0*m0) * tan_rand / (gamma + 2.0*m0*tan_rand);
 }
 
 //______________________________________________________________________________  
